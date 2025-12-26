@@ -3,14 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>StoryCanvas Live</title>
+    <title>StoryCanvas Live Pro</title>
     
     <style>
         :root {
             --bg-dark: #0f172a;
             --card-dark: #1e293b;
             --accent: #8b5cf6;
+            --accent-hover: #7c3aed;
             --text: #f8fafc;
+        }
+
+        /* FONDO ANIMADO DEGRADADO */
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         * { box-sizing: border-box; touch-action: manipulation; }
@@ -18,81 +26,95 @@
         body, html {
             margin: 0; padding: 0; height: 100%;
             font-family: 'Segoe UI', system-ui, sans-serif;
-            background-color: var(--bg-dark); color: var(--text);
+            color: var(--text);
             overflow: hidden;
+            background: linear-gradient(-45deg, #0f172a, #1e293b, #312e81, #1e1b4b);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
         }
 
         /* LOGIN */
         #login-screen {
-            position: fixed; inset: 0; background: var(--bg-dark);
+            position: fixed; inset: 0; 
             display: flex; align-items: center; justify-content: center; z-index: 1000;
+            background: inherit;
         }
         .login-box {
-            background: var(--card-dark); padding: 2rem; border-radius: 1.5rem;
+            background: rgba(30, 41, 59, 0.8); padding: 2.5rem; border-radius: 2rem;
             text-align: center; width: 90%; max-width: 400px;
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
         /* APP LAYOUT */
-        .app-container {
-            display: flex; flex-direction: column; height: 100vh;
-        }
+        .app-container { display: flex; flex-direction: column; height: 100vh; }
 
         header {
-            padding: 1rem; background: var(--card-dark);
+            padding: 0.8rem 1rem; background: rgba(30, 41, 59, 0.9);
             display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid #334155;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(5px);
         }
 
-        /* ZONA DE DIBUJO (FIJA ARRIBA) */
+        /* ZONA DE DIBUJO */
         #canvas-section {
-            background: var(--bg-dark); padding: 10px;
-            display: flex; flex-direction: column; align-items: center;
+            padding: 10px; display: flex; flex-direction: column; align-items: center;
         }
 
         .canvas-wrapper {
-            position: relative; width: 100%; max-width: 450px; aspect-ratio: 1/1;
-            background: white; border-radius: 1rem; overflow: hidden;
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5);
+            position: relative; width: 100%; max-width: 420px; aspect-ratio: 1/1;
+            background: white; border-radius: 1.2rem; overflow: hidden;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.4);
         }
 
-        canvas {
-            width: 100%; height: 100%; cursor: crosshair;
-            touch-action: none; /* Vital para móviles */
-        }
+        canvas { width: 100%; height: 100%; cursor: crosshair; touch-action: none; }
 
-        /* CONTROLES */
+        /* CONTROLES MEJORADOS */
         .toolbar {
-            display: flex; gap: 10px; margin-top: 10px; width: 100%; max-width: 450px;
-        }
-        input[type="color"] {
-            border: none; width: 45px; height: 45px; background: none; cursor: pointer;
+            display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; 
+            width: 100%; max-width: 420px; justify-content: center;
+            background: rgba(30, 41, 59, 0.5); padding: 10px; border-radius: 1rem;
         }
 
-        /* HISTORIA TIPO CHAT (SCROLL ABAJO) */
+        .tool-group { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.05); padding: 5px 10px; border-radius: 0.5rem; }
+
+        input[type="color"] {
+            border: none; width: 35px; height: 35px; background: none; cursor: pointer;
+        }
+
+        input[type="range"] { width: 80px; accent-color: var(--accent); }
+
+        .emoji-btn { font-size: 1.2rem; background: none; border: 1px solid #444; padding: 5px; border-radius: 5px; cursor: pointer; transition: 0.2s; }
+        .emoji-btn:hover { background: rgba(255,255,255,0.1); transform: scale(1.1); }
+
+        /* HISTORIA */
         #history-section {
             flex: 1; overflow-y: auto; padding: 1rem;
-            background: var(--bg-dark); border-top: 1px solid #334155;
+            background: rgba(15, 23, 42, 0.3);
         }
 
         .chat-bubble {
-            background: var(--card-dark); padding: 10px; border-radius: 1rem;
-            margin-bottom: 1rem; border-left: 4px solid var(--accent);
-            animation: slideIn 0.3s ease-out;
+            background: var(--card-dark); padding: 12px; border-radius: 1.2rem;
+            margin-bottom: 1rem; border-left: 5px solid var(--accent);
+            animation: slideIn 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
         }
-        .chat-bubble b { color: var(--accent); font-size: 0.8rem; display: block; }
-        .chat-bubble img { width: 100%; margin-top: 5px; border-radius: 0.5rem; background: white; }
+        .chat-bubble b { color: var(--accent); font-size: 0.85rem; display: block; margin-bottom: 5px; }
+        .chat-bubble img { width: 100%; border-radius: 0.8rem; background: white; display: block; }
 
         /* BOTONES */
         button {
-            padding: 10px 20px; border-radius: 0.75rem; border: none;
-            font-weight: bold; cursor: pointer; transition: 0.2s;
+            padding: 8px 15px; border-radius: 0.8rem; border: none;
+            font-weight: bold; cursor: pointer; transition: 0.3s;
+            color: white;
         }
-        .btn-main { background: var(--accent); color: white; flex: 1; }
-        .btn-danger { background: #ef4444; color: white; padding: 5px 10px; font-size: 0.7rem; }
+        .btn-main { background: var(--accent); flex: 1; }
+        .btn-main:hover { background: var(--accent-hover); }
+        .btn-secondary { background: #475569; font-size: 0.8rem; }
+        .btn-danger { background: #ef4444; font-size: 0.75rem; }
 
         .hidden { display: none !important; }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideIn { from { opacity: 0; transform: scale(0.9) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
     </style>
 </head>
 <body>
@@ -100,35 +122,45 @@
     <!-- Pantalla de Login -->
     <div id="login-screen">
         <div class="login-box">
-            <h1 style="margin-top:0">ParacoHistory</h1>
-            <p style="color: #94a3b8">SIGUE LA HISTORIA.</p>
-            <input type="text" id="username" placeholder="Tu nombre..." 
-                   style="width:100%; padding:12px; border-radius:8px; border:none; margin-bottom:1rem">
-            <button class="btn-main" onclick="join()">Empezar Historia</button>
+            <h1 style="margin:0 0 0.5rem 0; font-size: 2rem; background: linear-gradient(to right, #a78bfa, #f472b6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">StoryCanvas</h1>
+            <p style="color: #94a3b8; margin-bottom: 1.5rem">Dibuja la historia con otros</p>
+            <input type="text" id="username" placeholder="Tu nombre artístico..." 
+                   style="width:100%; padding:14px; border-radius:12px; border:1px solid #334155; background:#0f172a; color:white; margin-bottom:1.5rem; outline:none">
+            <button class="btn-main" style="width:100%; padding:14px" onclick="join()">Entrar al Lienzo</button>
         </div>
     </div>
 
     <!-- Interfaz de Juego -->
     <div id="app" class="app-container hidden">
         <header>
-            <div id="status">● Conectado como <span id="user-tag" style="color:var(--accent)"></span></div>
-            <button class="btn-danger" onclick="clearAll()">Reiniciar Todo</button>
+            <button class="btn-secondary" onclick="goBack()">← Salir</button>
+            <div id="status" style="font-size: 0.9rem">🎨 <span id="user-tag" style="color:var(--accent); font-weight:bold"></span></div>
+            <button class="btn-danger" onclick="clearAll()">Reiniciar</button>
         </header>
 
         <section id="canvas-section">
             <div class="canvas-wrapper">
                 <canvas id="mainCanvas"></canvas>
             </div>
+            
             <div class="toolbar">
-                <input type="color" id="colorPicker" value="#8b5cf6">
-                <button class="btn-main" onclick="finishStroke()">SUBIR MI PARTE</button>
+                <div class="tool-group">
+                    <input type="color" id="colorPicker" value="#8b5cf6">
+                    <input type="range" id="sizePicker" min="2" max="50" value="5">
+                </div>
+                <div class="tool-group">
+                    <button class="emoji-btn" onclick="setTool('pen')">🖌️</button>
+                    <button class="emoji-btn" onclick="setTool('emoji', '🔥')">🔥</button>
+                    <button class="emoji-btn" onclick="setTool('emoji', '⭐')">⭐</button>
+                    <button class="emoji-btn" onclick="setTool('emoji', '❤️')">❤️</button>
+                    <button class="emoji-btn" onclick="setTool('emoji', '😂')">😂</button>
+                </div>
+                <button class="btn-main" onclick="publishDrawing()">PUBLICAR MI PARTE</button>
             </div>
         </section>
 
         <section id="history-section">
-            <div id="chat-flow">
-                <!-- Aquí aparecerán los dibujos guardados -->
-            </div>
+            <div id="chat-flow"></div>
         </section>
     </div>
 
@@ -136,11 +168,12 @@
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 
     <script>
-        // --- CONFIGURACIÓN FIREBASE ---
+        // CONFIGURACIÓN FIREBASE (Misma base de datos)
         const firebaseConfig = {
            apiKey: "AIzaSyBMoyUF0bxIQtjZeZwK7nUal2gDUHWp_mc",
            authDomain: "history-4d35c.firebaseapp.com",
            projectId: "history-4d35c",
+           databaseURL: "https://history-4d35c-default-rtdb.firebaseio.com",
            storageBucket: "history-4d35c.firebasestorage.app",
            messagingSenderId: "609419245306",
            appId: "1:609419245306:web:db65199fb17148dbb8bb43"
@@ -148,24 +181,29 @@
 
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
-        const drawingRef = db.ref('canvas_state'); // Para el dibujo en tiempo real
-        const historyRef = db.ref('story_history'); // Para el feed tipo chat
+        const drawingRef = db.ref('canvas_state');
+        const historyRef = db.ref('story_history');
 
         let user = "";
+        let currentTool = 'pen';
+        let currentEmoji = '';
         const canvas = document.getElementById('mainCanvas');
         const ctx = canvas.getContext('2d');
         const chatFlow = document.getElementById('chat-flow');
         const historySection = document.getElementById('history-section');
         let isDrawing = false;
+        let lastPos = null;
 
-        // Inicializar Canvas
         function initCanvas() {
             const size = canvas.parentElement.offsetWidth;
             canvas.width = size;
             canvas.height = size;
+            resetCanvasStyle();
+        }
+
+        function resetCanvasStyle() {
             ctx.lineCap = 'round';
-            ctx.lineWidth = 3;
-            // Dibujar fondo blanco inicial
+            ctx.lineJoin = 'round';
             ctx.fillStyle = "white";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
@@ -180,7 +218,24 @@
             startListeners();
         }
 
-        // --- LÓGICA DE DIBUJO EN TIEMPO REAL ---
+        function goBack() {
+            if(confirm("¿Quieres volver a la pantalla principal? Tu progreso en el lienzo actual se mantendrá en la red.")) {
+                document.getElementById('app').classList.add('hidden');
+                document.getElementById('login-screen').classList.remove('hidden');
+                drawingRef.off();
+                historyRef.off();
+            }
+        }
+
+        function setTool(tool, emoji = '') {
+            currentTool = tool;
+            currentEmoji = emoji;
+            if(tool === 'emoji') {
+                canvas.style.cursor = 'crosshair';
+            }
+        }
+
+        // --- LÓGICA DE DIBUJO ---
         function getPos(e) {
             const rect = canvas.getBoundingClientRect();
             const clientX = e.touches ? e.touches[0].clientX : e.clientX;
@@ -191,79 +246,110 @@
             };
         }
 
-        canvas.addEventListener('mousedown', (e) => { isDrawing = true; draw(e); });
-        canvas.addEventListener('touchstart', (e) => { e.preventDefault(); isDrawing = true; draw(e); });
-        window.addEventListener('mouseup', () => { isDrawing = false; ctx.beginPath(); });
-        window.addEventListener('touchend', () => { isDrawing = false; ctx.beginPath(); });
-        canvas.addEventListener('mousemove', draw);
-        canvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e); });
-
-        function draw(e) {
-            if(!isDrawing) return;
+        function handleStart(e) {
+            isDrawing = true;
             const pos = getPos(e);
-            const color = document.getElementById('colorPicker').value;
-
-            // Enviamos el punto a Firebase para que otros lo vean en su canvas EN TIEMPO REAL
-            drawingRef.push({ x: pos.x, y: pos.y, color: color });
+            if(currentTool === 'emoji') {
+                placeEmoji(pos);
+            } else {
+                lastPos = pos;
+            }
         }
 
-        function paintPoint(x, y, color) {
-            ctx.strokeStyle = color;
-            ctx.lineTo(x * canvas.width, y * canvas.height);
-            ctx.stroke();
+        function handleMove(e) {
+            if(!isDrawing || currentTool !== 'pen') return;
+            const pos = getPos(e);
+            const color = document.getElementById('colorPicker').value;
+            const size = document.getElementById('sizePicker').value;
+
+            // Enviamos trazo completo para suavidad
+            drawingRef.push({
+                type: 'line',
+                x1: lastPos.x, y1: lastPos.y,
+                x2: pos.x, y2: pos.y,
+                color: color,
+                size: size
+            });
+            lastPos = pos;
+        }
+
+        function placeEmoji(pos) {
+            const size = document.getElementById('sizePicker').value;
+            drawingRef.push({
+                type: 'emoji',
+                x: pos.x, y: pos.y,
+                content: currentEmoji,
+                size: size
+            });
+        }
+
+        canvas.addEventListener('mousedown', handleStart);
+        canvas.addEventListener('touchstart', (e) => { e.preventDefault(); handleStart(e); });
+        window.addEventListener('mouseup', () => isDrawing = false);
+        window.addEventListener('touchend', () => isDrawing = false);
+        canvas.addEventListener('mousemove', handleMove);
+        canvas.addEventListener('touchmove', (e) => { e.preventDefault(); handleMove(e); });
+
+        function drawRemoteLine(data) {
             ctx.beginPath();
-            ctx.moveTo(x * canvas.width, y * canvas.height);
+            ctx.strokeStyle = data.color;
+            ctx.lineWidth = data.size;
+            ctx.moveTo(data.x1 * canvas.width, data.y1 * canvas.height);
+            ctx.lineTo(data.x2 * canvas.width, data.y2 * canvas.height);
+            ctx.stroke();
+            ctx.closePath();
+        }
+
+        function drawRemoteEmoji(data) {
+            ctx.font = `${data.size * 2}px serif`;
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText(data.content, data.x * canvas.width, data.y * canvas.height);
         }
 
         // --- SINCRONIZACIÓN ---
         function startListeners() {
-            // 1. Escuchar trazos en tiempo real (todos dibujan en el mismo lienzo)
             drawingRef.on('child_added', (snap) => {
-                const p = snap.val();
-                paintPoint(p.x, p.y, p.color);
+                const data = snap.val();
+                if(data.type === 'line') drawRemoteLine(data);
+                if(data.type === 'emoji') drawRemoteEmoji(data);
             });
 
-            // 2. Escuchar cuando alguien "sube" su versión de la historia al chat
             historyRef.on('child_added', (snap) => {
                 const data = snap.val();
                 addToHistory(data.user, data.img);
             });
 
-            // 3. Reinicio total
             drawingRef.on('value', snap => {
-                if(!snap.exists()) {
-                    ctx.fillStyle = "white";
-                    ctx.fillRect(0,0,canvas.width,canvas.height);
-                    chatFlow.innerHTML = "";
-                }
+                if(!snap.exists()) resetCanvasStyle();
             });
         }
 
-        // Guardar captura en el chat
-        function finishStroke() {
+        function publishDrawing() {
             const dataUrl = canvas.toDataURL('image/webp', 0.5);
             historyRef.push({
                 user: user,
-                img: dataUrl
+                img: dataUrl,
+                timestamp: Date.now()
             });
         }
 
         function addToHistory(author, imgData) {
             const div = document.createElement('div');
             div.className = 'chat-bubble';
-            div.innerHTML = `<b>${author} añadió a la historia:</b><img src="${imgData}">`;
+            div.innerHTML = `<b>✨ ${author} añadió un capítulo:</b><img src="${imgData}">`;
             chatFlow.appendChild(div);
             
-            // Auto-scroll al último dibujo (Chat Style)
             setTimeout(() => {
                 historySection.scrollTo({ top: historySection.scrollHeight, behavior: 'smooth' });
             }, 100);
         }
 
         function clearAll() {
-            if(confirm("¿Reiniciar la historia para todos los jugadores?")) {
+            if(confirm("¿Eliminar la historia y el lienzo para todos?")) {
                 drawingRef.remove();
                 historyRef.remove();
+                chatFlow.innerHTML = "";
             }
         }
 
